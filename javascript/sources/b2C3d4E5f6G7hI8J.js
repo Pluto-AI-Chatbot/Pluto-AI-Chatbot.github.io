@@ -1,0 +1,5 @@
+    { keyword: /let's (.+)/i, response: (matches) => `Sounds good! What do you have in mind for ${matches[1]}?` },
+    { keyword: /what if (.+)/i, response: (matches) => `What do you think would happen if ${matches[1]}?` },
+    { keyword: /tell me/i, response: () => `What would you like to know more about?` },
+    { keyword: /what do you think/i, response: () => `I’d love to know your thoughts on it too!` },
+    { keyword: /I doubt (.+)/i, response: (matches) => `Doubt can be tricky. What makes you doubt ${matches[1]}?` },
