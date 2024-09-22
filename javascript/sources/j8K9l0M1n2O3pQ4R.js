@@ -1,29 +1,92 @@
-        async function sendMessage() {
-            const inputBox = document.getElementById('userInput');
-            const chatBox = document.getElementById('chatBox');
-            const userMessage = inputBox.value.trim();
+async function sendMessage() {
+    const inputBox = document.getElementById('userInput');
+    const chatBox = document.getElementById('chatBox');
+    const userMessage = inputBox.value.trim();
 
-            // Display the user's message
-            if (userMessage) {
-                const userMessageElement = document.createElement('p');
-                userMessageElement.textContent = userMessage;
-                userMessageElement.className = 'chat-message user';
-                chatBox.appendChild(userMessageElement);
-                
-                // Clear the input field
-                inputBox.value = '';
+    // Display user message
+    const userMessageElement = document.createElement('p');
+    userMessageElement.textContent = userMessage;
+    userMessageElement.className = 'chat-message user';
+    chatBox.appendChild(userMessageElement);
+    inputBox.value = '';
 
-                // Generate a bot response
-                const botResponse = await getBotResponse(userMessage);
-                const botMessageElement = document.createElement('p');
-                botMessageElement.innerHTML = botResponse; // Use innerHTML for potential HTML content
-                botMessageElement.className = 'chat-message bot';
-                chatBox.appendChild(botMessageElement);
+    const botResponse = await getBotResponse(userMessage);
+    const botResponseDiv = document.createElement('div');
+    botResponseDiv.className = 'chat-message bot';
+    chatBox.appendChild(botResponseDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-                // Scroll to the bottom of the chat box
-                chatBox.scrollTop = chatBox.scrollHeight;
+    // Split response into text and HTML parts
+    const segments = splitResponse(botResponse);
+    let currentSegment = 0;
+
+    function displayNextSegment() {
+        if (currentSegment < segments.length) {
+            const segment = segments[currentSegment];
+
+            if (segment.isHTML) {
+                // Append HTML content
+                botResponseDiv.innerHTML += `<div>${segment.content}</div><br>`;
+                chatBox.scrollTop = chatBox.scrollHeight; 
+                currentSegment++;
+                displayNextSegment(); // Continue to the next segment
+            } else {
+                // Handle plain text, display it word by word
+                const words = segment.content.split(' ');
+                let index = 0;
+
+                const cursor = document.createElement('span');
+                cursor.className = 'cursor';
+                botResponseDiv.appendChild(cursor);
+
+                function sendWord() {
+                    if (index < words.length) {
+                        // Insert the word before the cursor
+                        botResponseDiv.insertBefore(document.createTextNode(words[index] + ' '), cursor);
+                        index++;
+                        setTimeout(sendWord, 30); // Adjust timing as needed
+                    } else {
+                        // Remove cursor after the last word
+                        botResponseDiv.removeChild(cursor);
+                        currentSegment++; // Move to the next segment after finishing this one
+                        displayNextSegment(); // Continue to the next segment
+                    }
+                }
+
+                sendWord(); // Start displaying the words
             }
         }
+    }
+
+    // Start displaying segments
+    displayNextSegment();
+}
+
+function splitResponse(response) {
+    const parts = [];
+    const hashHtmlRegex = /#(.*?)#/g; // Regex for detecting content within # symbols
+
+    const segments = response.split(hashHtmlRegex);
+
+    segments.forEach((segment, index) => {
+        const trimmedSegment = segment.trim();
+        if (trimmedSegment) {
+            if (index % 2 === 1) {
+                parts.push({
+                    isHTML: true,
+                    content: trimmedSegment // Use as HTML
+                });
+            } else {
+                parts.push({
+                    isHTML: false,
+                    content: trimmedSegment
+                });
+            }
+        }
+    });
+
+    return parts; // Return the processed parts
+}
 
         async function getBotResponse(message) {
             const inputText = message.toLowerCase();
@@ -278,16 +341,16 @@ Instructions:
 
 Image: 
 
-   <img src="${meal.strMealThumb}" alt="Thumnail for "${query}" style="width: 200px; height: 200px;" />
+   #<img src="${meal.strMealThumb}" alt="Thumnail for "${query}" style="width: 200px; height: 200px;" />#
 
 Tags: ${meal.strTags}
 
-<a href="${meal.strYoutube}" target="_blank">Watch Recipe Video</a>
+#<a href="${meal.strYoutube}" target="_blank">Watch Recipe Video</a>#
 
 Ingredients: 
    ${ingredientsList.join('\n ')}
 
-<a href="${meal.strSource}" target="_blank">Source</a>
+#<a href="${meal.strSource}" target="_blank">Source</a>#
                 `;
             } catch (error) {
                 console.error(`Error fetching data for "${query}":`, error);
@@ -305,7 +368,7 @@ Ingredients:
 		const output = `
 Here is your QR code:
 
-<img src="${qrCodeUrl}" alt="QR Code" />
+   #<img src="${qrCodeUrl}" alt="QR Code" />#
  `;
                 return output;
             } catch (error) {
@@ -431,7 +494,7 @@ ${joke.punchline}
         const movieLanguage = movieData.Language;
 
         const formattedMovieData = `
-<img src="${movieData.Poster}" alt="QR Code" style="width: 200px; height: auto;" />
+  #<img src="${movieData.Poster}" alt="QR Code" style="width: 200px; height: auto;" />#
 
 Title: ${movieTitle}
 
@@ -493,16 +556,22 @@ Instructions:
 
 Image: 
 
-   <img src="${meal.strMealThumb}" alt="Thumnail for "${meal.strMeal}" style="width: 200px; height: 200px;" />
+
+
+
+
+   #<img src="${meal.strMealThumb}" alt="Thumnail for "${meal.strMeal}" style="width: 200px; height: 200px;" />#
+
+
 
 Tags: ${meal.strTags}
 
-<a href="${meal.strYoutube}" target="_blank">Watch Recipe Video</a>
+   #<a href="${meal.strYoutube}" target="_blank">Watch Recipe Video</a>#
 
 Ingredients: 
    ${ingredientsList.join('\n ')}
 
-<a href="${meal.strSource}" target="_blank">Source</a>
+   #<a href="${meal.strSource}" target="_blank">Source</a>#
                 `;
                     return formattedInfo;
                 } catch (error) {
