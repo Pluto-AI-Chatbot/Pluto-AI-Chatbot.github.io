@@ -16,6 +16,7 @@
         if (!authData || authData !== expectedAuthData) {
             window.location.href = 'index.html'; // Redirect to login if no auth data
         }
+        localStorage.removeItem('authData');
     </script>
 </body>
 </html>
