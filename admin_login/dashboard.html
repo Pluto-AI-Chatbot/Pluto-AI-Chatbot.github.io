@@ -3,11 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .error {
+            color: red;
+        }
+        .api-link {
+            display: block;
+            margin: 5px 0;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .api-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Dashboard</h1>
-    <p id="response"></p>
+    <h1>Welcome to the Admin Dashboard</h1>
+    <div id="response"></div>
 
     <script>
         const authData = localStorage.getItem('authData');
@@ -16,7 +46,35 @@
         if (!authData || authData !== expectedAuthData) {
             window.location.href = 'index.html'; // Redirect to login if no auth data
         }
+        
+        // Admin API Links
+        const apiLinks = [
+            { name: "User Management API", url: "https://api.example.com/users", key: "YOUR_API_KEY_1" },
+            { name: "Product Management API", url: "https://api.example.com/products", key: "YOUR_API_KEY_2" },
+            { name: "Order Management API", url: "https://api.example.com/orders", key: "YOUR_API_KEY_3" },
+            { name: "Analytics API", url: "https://api.example.com/analytics", key: "YOUR_API_KEY_4" }
+        ];
+
+        // Function to display API links
+        function displayApiLinks() {
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = ''; // Clear previous content
+
+            apiLinks.forEach(api => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <h2>${api.name}</h2>
+                    <p><strong>API Endpoint:</strong> <a class="api-link" href="${api.url}" target="_blank">${api.url}</a></p>
+                    <p><strong>API Key:</strong> <code>${api.key}</code></p>
+                `;
+                responseDiv.appendChild(card);
+            });
+        }
+
         localStorage.removeItem('authData');
+        displayApiLinks(); // Display the API links on page load
     </script>
 </body>
 </html>
+
