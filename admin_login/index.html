@@ -4,18 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffcc00;
+            overflow: hidden;
+            position: relative;
+        }
+        h1 {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            color: #ff007f;
+            text-shadow: 2px 2px 0 #00ffcc, 4px 4px 0 #ffcc00;
+            animation: bounce 2s infinite;
+        }
+        input {
+            padding: 15px;
+            margin: 10px;
+            border-radius: 15px;
+            border: 2px solid #ff007f;
+            font-size: 1.5em;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #ffea00, #00ff00, #00d7ff, #0055ff, #8700ff, #ff00ab);
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            animation: colorChange 3s infinite;
+        }
+        button {
+            padding: 15px;
+            margin: 10px;
+            border-radius: 15px;
+            border: none;
+            background: linear-gradient(45deg, #ff00ff, #ff7300);
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            animation: shake 0.5s infinite alternate;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #ff7300, #00ff00);
+        }
+        #message {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translate(-50%, 50%);
+            font-size: 1.5em;
+            color: #ff007f;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+        
+        @keyframes colorChange {
+            0% { background: #ff0000; }
+            25% { background: #00ff00; }
+            50% { background: #0000ff; }
+            75% { background: #ff00ff; }
+            100% { background: #ff7300; }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
 </head>
 <body>
     <h1>Login</h1>
     <input type="password" id="password" placeholder="Enter password">
     <button id="loginButton">Login</button>
-    <p id="message"></p>
+    <p id="message">Ready to login</p>
 
     <script>
         // Hash of 'password4321' (md5)
         const correctPasswordHash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // md5 hash for "password4321"
-        
-        document.getElementById('message').innerText = 'Ready to login';
 
         async function hashPassword(password) {
             const encoder = new TextEncoder();
