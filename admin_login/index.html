@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <input type="password" id="password" placeholder="Enter password">
+    <button id="loginButton">Login</button>
+    <p id="message"></p>
+
+    <script>
+        let correctPasswordHash = '';
+        let salt = '';
+
+        async function fetchSalts() {
+            try {
+                const response = await fetch('get-salts.html', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ authKey: 'd9F3zqP1xY8kL5tJwM2bV6nWqR4eX7sU' })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to retrieve salts and hashes');
+                }
+
+                const data = await response.json(); // Assuming get-salts.html returns JSON
+                correctPasswordHash = data.hash1;
+                salt = data.salt1;
+                localStorage.setItem('authData', 
+                    `${data.salt1}:${data.hash1}:${data.salt2}:${data.hash2}`);
+                document.getElementById('message').innerText = 'Ready to login';
+            } catch (error) {
+                document.getElementById('message').innerText = error.message;
+            }
+        }
+
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(salt + password); 
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
+        }
+
+        document.getElementById('loginButton').addEventListener('click', async () => {
+            const password = document.getElementById('password').value;
+            const passwordHash = await hashPassword(password);
+
+            if (passwordHash === correctPasswordHash) {
+                // Store the password and its hash
+                const storedValue = `${password}:${passwordHash}`;
+                localStorage.setItem('authData', storedValue);
+                window.location.href = 'dashboard.html';
+            } else {
+                document.getElementById('message').innerText = 'Incorrect password';
+            }
+        });
+
+        // Fetch salts when the script loads
+        fetchSalts();
+    </script>
+</body>
+</html>
