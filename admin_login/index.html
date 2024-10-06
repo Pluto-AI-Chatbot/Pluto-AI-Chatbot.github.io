@@ -12,33 +12,11 @@
     <p id="message"></p>
 
     <script>
-        let correctPasswordHash = '';
-        let salt = '';
-
-        async function fetchSalts() {
-            try {
-                const response = await fetch('get-salts.html', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ authKey: 'd9F3zqP1xY8kL5tJwM2bV6nWqR4eX7sU' })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to retrieve salts and hashes');
-                }
-
-                const data = await response.json(); // Assuming get-salts.html returns JSON
-                correctPasswordHash = data.hash1;
-                salt = data.salt1;
+                const correctPasswordHash = data.hash1;
+                const salt = data.salt1;
                 localStorage.setItem('authData', 
-                    `${data.salt1}:${data.hash1}:${data.salt2}:${data.hash2}`);
+                    `correctPasswordHash:salt`);
                 document.getElementById('message').innerText = 'Ready to login';
-            } catch (error) {
-                document.getElementById('message').innerText = error.message;
-            }
-        }
 
         async function hashPassword(password) {
             const encoder = new TextEncoder();
