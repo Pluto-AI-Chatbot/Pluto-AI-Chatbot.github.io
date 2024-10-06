@@ -7,37 +7,48 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: linear-gradient(to right, #4a90e2, #0056b3);
+            color: white;
             margin: 0;
             padding: 20px;
         }
         h1 {
-            color: #333;
+            color: #fff;
         }
         .card {
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
             padding: 20px;
             margin: 10px 0;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .error {
-            color: red;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         .api-link {
             display: block;
             margin: 5px 0;
-            color: #007BFF;
+            color: #00c4ff;
             text-decoration: none;
         }
         .api-link:hover {
             text-decoration: underline;
+        }
+        .logout-button {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .logout-button:hover {
+            background: #ff1a1a;
         }
     </style>
 </head>
 <body>
     <h1>Welcome to the Admin Dashboard</h1>
     <div id="response"></div>
+    <button class="logout-button" onclick="logout()">Logout</button>
 
     <script>
         const authData = localStorage.getItem('authData');
@@ -46,6 +57,7 @@
         if (!authData || authData !== expectedAuthData) {
             window.location.href = 'index.html'; // Redirect to login if no auth data
         }
+        localStorage.removeItem('authData');
         
         // Admin API Links
         const apiLinks = [
@@ -72,9 +84,12 @@
             });
         }
 
-        localStorage.removeItem('authData');
+        // Logout function
+        function logout() {
+            window.location.href = 'index.html'; // Redirect to login
+        }
+
         displayApiLinks(); // Display the API links on page load
     </script>
 </body>
 </html>
-
