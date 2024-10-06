@@ -1,1 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Dashboard</h1>
+    <p id="response"></p>
 
+    <script>
+        const authData = localStorage.getItem('authData');
+        if (!authData) {
+            window.location.href = 'index.html'; // Redirect to login if no auth data
+        } else {
+            // Parse the salts and hashes from localStorage
+            const [salt1, hash1, salt2, hash2] = authData.split(':');
+
+            document.getElementById('response').innerText = 
+                `Salt 1: ${salt1}\n` +
+                `Hash 1: ${hash1}\n` +
+                `Salt 2: ${salt2}\n` +
+                `Hash 2: ${hash2}\n`;
+        }
+    </script>
+</body>
+</html>
